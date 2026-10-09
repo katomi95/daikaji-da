@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>大火事だ！</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="title">
+  <div class="card">
+    <h1>大火事だ！</h1>
+    <p class="lead">部屋のあちこちでCGの炎が上がる。<br>放っておくと燃え広がる。どこから消すかが勝負。</p>
+    <button id="btn-start" disabled>ゲーム開始</button>
+    <p id="xr-status" class="status">WebXR を確認中…</p>
+    <button id="btn-preview" class="sub">PCプレビューで遊ぶ</button>
+    <ul class="howto">
+      <li><b>Quest 3：</b>右手トリガーを押している間、消火剤を噴射。周りを見回して火元を探そう。</li>
+      <li><b>PC：</b>クリックでマウス操作開始。マウスで見回し、画面中央の照準を炎に合わせて左クリック長押しで噴射。</li>
+      <li><b>ルール：</b>小さい火はすぐ消えるが、大きい火ほど燃え広がりやすい。全部消せば「完全鎮火！」。</li>
+      <li>移動不要・着席でも遊べます（左右に振り向きます）。周囲の安全を確認してから開始してください。</li>
+    </ul>
+  </div>
+</div>
+<button id="btn-back" hidden>タイトルへ戻る</button>
+<div id="pc-hud" hidden>
+  <div class="bar"><span>火元 <b id="pc-count">0</b></span><span id="pc-time">0:00</span></div>
+  <div id="pc-hint">クリックでマウス操作開始／右ドラッグ・矢印キーでも見回せます</div>
+</div>
+<div id="crosshair" aria-hidden="true"></div>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
