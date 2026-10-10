@@ -101,7 +101,7 @@ export class Sfx {
   // 0..1：火災の規模
   setFireLevel(x) {
     if (!this.ctx) return;
-    const v = x <= 0 ? 0 : 0.04 + 0.2 * Math.min(1, x);
+    const v = x <= 0 ? 0 : 0.06 + 0.3 * Math.min(1, x);
     this.rumbleGain.gain.setTargetAtTime(v, this.ctx.currentTime, 0.4);
   }
 

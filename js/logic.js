@@ -27,8 +27,8 @@ export const CONFIG = {
   waveDist: [1.8, 2.8],
 
   // --- 成長 ---
-  growthMin: 1.6,         // 火勢/秒 の下限（炎ごとにランダム）
-  growthMax: 2.8,         // 火勢/秒 の上限
+  growthMin: 1.7,         // 火勢/秒 の下限（炎ごとにランダム）
+  growthMax: 2.9,         // 火勢/秒 の上限
   growthAccelMin: 0.6,    // 火勢0での成長倍率。火勢50で1倍、100で(2-この値)倍になる
   sprayResumeDelay: 0.8,  // 消火剤が外れてから再び成長し始めるまでの秒数
 
@@ -71,7 +71,8 @@ export const FIRE_HEIGHT = 0.72; // scale=1 のときの高さ(m)
 export const FIRE_WIDTH = 0.62;
 export function fireScale(intensity) {
   const p = Math.max(0, Math.min(100, intensity)) / 100;
-  return { x: (0.35 + 0.95 * p) * (0.9 + 0.35 * p), y: 0.35 + 0.95 * p };
+  // 小火でも膝下くらい、大火は高さ1.2m・幅1mほどになる
+  return { x: (0.42 + 1.0 * p) * (0.9 + 0.35 * p), y: 0.45 + 1.2 * p };
 }
 
 // 火勢の区分

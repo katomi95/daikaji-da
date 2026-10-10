@@ -40,7 +40,7 @@ float noise(vec2 p) {
 }
 
 void main() {
-  float speed = 1.6 + 2.0 * vPower;
+  float speed = 2.0 + 3.0 * vPower;
   float y = vUv.y;
   float x = (vUv.x - 0.5) * 2.0;
   float t = uTime * speed + vSeed * 7.0;
@@ -49,25 +49,25 @@ void main() {
   float n = n1 * 0.7 + n2 * 0.3;
 
   // 上に行くほど大きく揺らす（大火ほど激しく）
-  x += (n - 0.5) * (0.8 + 0.5 * vPower) * y;
+  x += (n - 0.5) * (0.9 + 0.9 * vPower) * y;
   // しずく型の幅：根元は丸く、先端は細く
   float w = 0.82 * pow(max(1.0 - y, 0.0), 0.75) * (0.35 + 0.65 * smoothstep(0.0, 0.2, y));
   float body = 1.0 - smoothstep(w * 0.45, w, abs(x));
   // 先端はノイズでちぎれる
-  body *= smoothstep(1.02, 0.45, y + (n - 0.5) * (0.5 + 0.3 * vPower));
+  body *= smoothstep(1.02, 0.45, y + (n - 0.5) * (0.55 + 0.45 * vPower));
   if (body < 0.01) discard;
 
   // 芯ほど黄色、外側ほど赤
-  float heat = body * (1.15 - y * 0.75);
+  float heat = body * (1.15 - y * 0.75) * (0.95 + 0.25 * vPower);
   vec3 red = vec3(0.92, 0.12, 0.03);
   vec3 orange = vec3(1.0, 0.45, 0.05);
   vec3 yellow = vec3(1.0, 0.88, 0.35);
   vec3 col = mix(red, orange, smoothstep(0.15, 0.55, heat));
   col = mix(col, yellow, smoothstep(0.6, 0.95, heat));
 
-  float a = body * (0.55 + 0.45 * vPower);
+  float a = body * (0.7 + 0.3 * vPower);
   // 乗算済みアルファ。アルファを少し控えめに書いて「光っている」感じを残す
-  gl_FragColor = vec4(col * a, a * 0.7);
+  gl_FragColor = vec4(col * a * (1.0 + 0.25 * vPower), a * 0.7);
 }`;
 
 const GLOW_VERT = /* glsl */`
@@ -95,7 +95,7 @@ void main() {
   float d = length(vUv - 0.5) * 2.0;
   float tt = uTime + vSeed * 3.0;
   float flick = 0.85 + 0.15 * sin(tt * 9.0) * sin(tt * 5.3);
-  float a = (1.0 - smoothstep(0.0, 1.0, d)) * 0.5 * vPower * flick;
+  float a = (1.0 - smoothstep(0.0, 1.0, d)) * (0.25 + 0.55 * vPower) * flick;
   if (a < 0.004) discard;
   vec3 col = mix(vec3(1.0, 0.35, 0.05), vec3(1.0, 0.7, 0.2), 1.0 - d);
   gl_FragColor = vec4(col * a, a * 0.35);
@@ -166,7 +166,7 @@ export class FireField {
     this.group.add(this.glow.mesh, this.outer.mesh, this.core.mesh);
 
     // 火の粉（全部の炎で1つのプールを共有。ワールド座標で動かす）
-    this.sparks = new Particles(220, { glow: 0.6 });
+    this.sparks = new Particles(320, { glow: 0.6 });
     this.sparks.colorFn = (k, t, o) => {
       o[0] = 1.0;
       o[1] = 0.85 - 0.65 * t;
@@ -248,7 +248,7 @@ export class FireField {
       // 火の粉：大きい炎ほど多い
       const p = it.power;
       if (p > 0.03 && !it.dying) {
-        it.spawnAcc += dt * (3 + 16 * p);
+        it.spawnAcc += dt * (4 + 26 * p);
         const s = fireScale(p * 100);
         const base = this.toWorld(it.x, 0, it.z, this._v);
         while (it.spawnAcc >= 1) {
@@ -256,9 +256,9 @@ export class FireField {
           const a = Math.random() * Math.PI * 2;
           const r = Math.random() * 0.14 * s.x * sx;
           this.sparks.spawn(
-            base.x + Math.cos(a) * r, base.y + (0.1 + Math.random() * 0.25) * s.y, base.z + Math.sin(a) * r,
-            (Math.random() - 0.5) * 0.25, 0.5 + Math.random() * 0.6 * (0.5 + p), (Math.random() - 0.5) * 0.25,
-            0.5 + Math.random() * 0.5, (0.05 + Math.random() * 0.06) * (0.6 + 0.5 * p), 0.015,
+            base.x + Math.cos(a) * r, base.y + (0.1 + Math.random() * 0.4) * s.y, base.z + Math.sin(a) * r,
+            (Math.random() - 0.5) * (0.3 + 0.5 * p), 0.6 + Math.random() * (0.6 + 1.4 * p), (Math.random() - 0.5) * (0.3 + 0.5 * p),
+            0.5 + Math.random() * (0.5 + 0.5 * p), (0.05 + Math.random() * 0.06) * (0.6 + 0.5 * p), 0.015,
           );
         }
       }
@@ -275,7 +275,8 @@ export class FireField {
       const p = it.power;
       const s = fireScale(p * 100);
       // ゆるやかな揺らぎ（強い点滅にはしない）
-      const sway = 1 + 0.05 * Math.sin(this.time * 3.1 + it.seed) + 0.03 * Math.sin(this.time * 7.7 + it.seed * 2);
+      // 大きい炎ほど大きく伸び縮みする
+      const sway = 1 + (0.05 + 0.07 * p) * Math.sin(this.time * 3.1 + it.seed) + (0.03 + 0.05 * p) * Math.sin(this.time * 7.7 + it.seed * 2);
       // 消えかけは小さく（縮み切ったら見えなくなる）
       const vis = it.dying ? Math.min(1, p * 4) : Math.min(1, p * 12);
       const scx = s.x * vis, scy = s.y * sway * vis;
@@ -296,7 +297,7 @@ export class FireField {
         c.iSeed.array[j] = it.seed + 4.1 + k * 2.3;
       }
       g.iPos.array.set([it.x, 0.005, it.z], i * 3);
-      g.iScale.array[i * 2] = 0.6 + 0.8 * p; g.iScale.array[i * 2 + 1] = 1;
+      g.iScale.array[i * 2] = 0.8 + 1.3 * p; g.iScale.array[i * 2 + 1] = 1;
       g.iPower.array[i] = p * vis;
       g.iSeed.array[i] = it.seed;
     }
