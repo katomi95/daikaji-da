@@ -17,18 +17,19 @@ export const CONFIG = {
 
   // --- 新たな出火（延焼とは別に、部屋のあちこちで火が出る。数か所ずつ「波」で来る） ---
   waves: [                   // at: 出火からの秒数, count: 同時に出る数
-    { at: 15, count: 2 },
-    { at: 30, count: 3 },
-    { at: 46, count: 3 },
-    { at: 62, count: 4 },
+    { at: 14, count: 3 },
+    { at: 28, count: 3 },
+    { at: 42, count: 4 },
+    { at: 56, count: 4 },
+    { at: 70, count: 4 },
   ],
   waveWhenClear: 2.0,        // 炎が0になったら、次の波をこの秒数後に前倒しする
   waveIntensity: [12, 40],
   waveDist: [1.8, 2.8],
 
   // --- 成長 ---
-  growthMin: 1.7,         // 火勢/秒 の下限（炎ごとにランダム）
-  growthMax: 2.9,         // 火勢/秒 の上限
+  growthMin: 1.8,         // 火勢/秒 の下限（炎ごとにランダム）
+  growthMax: 3.0,         // 火勢/秒 の上限
   growthAccelMin: 0.6,    // 火勢0での成長倍率。火勢50で1倍、100で(2-この値)倍になる
   sprayResumeDelay: 0.8,  // 消火剤が外れてから再び成長し始めるまでの秒数
 
